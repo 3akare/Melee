@@ -45,34 +45,34 @@ public class Melee {
         return Optional.empty();
     }
 
-    private Properties setUpProperties(String host){
+    private Properties setUpProperties(String host, String protocol){
         Properties properties = new Properties();
-        properties.put("mail.pop3.host", host);
-        properties.put("mail.pop3.port", "995");
-        properties.put("mail.pop3.starttls.enable", "true");
-
+        properties.put("mail.imap.host", host);
+        properties.put("mail.imap.port", "995");
+        properties.put("mail.store.protocol", protocol);
         return properties;
     }
 
     private void createEmailFetchSession(Map<String, String> environmentVariables){
         System.out.println(environmentVariables);
         try {
-            Session emailSession = Session.getDefaultInstance(setUpProperties(environmentVariables.get("host")));
-            Store store = emailSession.getStore(environmentVariables.get("storeType") + "s");
+            Session emailSession = Session.getDefaultInstance(
+                    setUpProperties(
+                            environmentVariables.get("host"),
+                            environmentVariables.get("storeType"))
+            );
 
-            System.out.println(store);
-
+            Store store = emailSession.getStore(environmentVariables.get("storeType"));
             store.connect(
                     environmentVariables.get("host"),
                     environmentVariables.get("address"),
                     environmentVariables.get("password")
             );
 
-            System.out.println(store);
-
             //create the folder object and open it
             Folder inbox = store.getFolder("INBOX");
             inbox.open(Folder.READ_ONLY);
+
 
             int totalMessages = inbox.getMessageCount();
             int start = 1;
