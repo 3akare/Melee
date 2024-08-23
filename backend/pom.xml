@@ -7,12 +7,6 @@
   <name>Archetype - backend</name>
   <url>http://maven.apache.org</url>
   <dependencies>
-<!--    &lt;!&ndash; https://mvnrepository.com/artifact/javax.mail/javax.mail-api &ndash;&gt;-->
-<!--    <dependency>-->
-<!--      <groupId>javax.mail</groupId>-->
-<!--      <artifactId>javax.mail-api</artifactId>-->
-<!--      <version>1.6.2</version>-->
-<!--    </dependency>-->
     <!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
     <dependency>
       <groupId>com.sun.mail</groupId>
@@ -20,4 +14,16 @@
       <version>1.6.2</version>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>9</source>
+          <target>9</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
