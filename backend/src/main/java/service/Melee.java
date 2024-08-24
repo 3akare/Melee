@@ -7,6 +7,9 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,7 +24,34 @@ public class Melee {
             () -> new RuntimeException("Unable to fetch environment variables")
         );
         log.info("env: " + environmentVariables.toString());
-        createEmailFetchSession(environmentVariables);
+        pythonIntegration();
+//        createEmailFetchSession(environmentVariables);
+    }
+
+    private void pythonIntegration(){
+        try{
+            ProcessBuilder processBuilder = new ProcessBuilder("java", "--version");
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            try(OutputStreamWriter writer = new OutputStreamWriter(process.getOutputStream())){
+                writer.write("This is a message from java");
+                writer.flush();
+
+                try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while((line = reader.readLine()) != null){
+                        System.out.println("output: "+ line);
+                    }
+                }
+                process.waitFor();
+            }catch (Exception exception){
+                System.err.println(exception.getLocalizedMessage());
+            }
+        }catch (Exception exception){
+            System.err.println("Error: " + exception.getLocalizedMessage());
+        }
+
     }
 
     private Optional<Map<String, String>> fetchEnvironmentVariables(){
