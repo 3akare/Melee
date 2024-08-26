@@ -30,7 +30,7 @@ public class Melee {
 
     private void pythonIntegration(){
         try{
-            ProcessBuilder processBuilder = new ProcessBuilder("java", "--version");
+            ProcessBuilder processBuilder = new ProcessBuilder("python", "./scripts/main.py");
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 
@@ -41,7 +41,7 @@ public class Melee {
                 try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line;
                     while((line = reader.readLine()) != null){
-                        System.out.println("output: "+ line);
+                        System.out.println(line);
                     }
                 }
                 process.waitFor();
