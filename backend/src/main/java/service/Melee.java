@@ -1,53 +1,72 @@
 package service;
 
+import com.mongodb.MongoClient;
 import config.PropertiesConfig;
+import entity.Data;
+import service.impl.DataServiceDaoImpl;
 import utils.MeleeUtils;
 
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
-import java.util.Map;
-import java.util.Objects;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 // todo: Database READ and WRITE, no more logs
-// todo: API Calls to python-server based on environment variables'
-// todo: env file
 
 public class Melee {
     private static final Logger log = Logger.getLogger(Melee.class.getName());
+    private static final  PropertiesConfig props = MeleeUtils.fetchEnvironmentVariables().orElseThrow(
+            () -> new RuntimeException("Error fetching environment variables")
+    );
 
     public void run(){
-        Map<String, String> environmentVariables = Objects.requireNonNull(MeleeUtils.fetchEnvironmentVariables()).orElseThrow(
-            () -> new RuntimeException("Unable to fetch environment variables")
-        );
-        log.info("env: " + environmentVariables.toString());
-    }
-
-    private void apiCall(){
-        try{
-            System.out.println("API Call made");
+        try(MongoClient mongoClient = new MongoClient("localhost", 27017);
+        ){
+            iDataServiceDao dataServiceDao = new DataServiceDaoImpl(mongoClient, "MeleeDatabase");
+            createEmailSession(dataServiceDao);
+            System.out.println(parserApiCall());
         }catch (Exception exception){
-            System.err.println("Error: " + exception.getLocalizedMessage());
+            System.err.println(exception.getLocalizedMessage());
         }
     }
 
-    private void createEmailFetchSession(Map<String, String> environmentVariables){
-        System.out.println(environmentVariables);
+    private Object parserApiCall(){
+        try{
+            HttpClient httpClient = HttpClient.newHttpClient();
+            String url = props.getParserUrl();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Accept", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("Hello"))
+                    .build();
+
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception error){
+            System.err.println(error.getLocalizedMessage());
+        }
+        return null;
+    }
+
+    private void createEmailSession(iDataServiceDao dataServiceDao){
+        System.out.println(props);
         try {
             Session emailSession = Session.getDefaultInstance(
                 setUpProperties(
-                    environmentVariables.get("host"),
-                    environmentVariables.get("storeType"))
+                        props.getHost(),
+                        props.getStoreType()
+                )
             );
-
-            Store store = emailSession.getStore(environmentVariables.get("storeType"));
+            Store store = emailSession.getStore(props.getStoreType());
             store.connect(
-                environmentVariables.get("host"),
-                environmentVariables.get("address"),
-                environmentVariables.get("password")
+                props.getHost(),
+                props.getAddress(),
+                props.getPassword()
             );
 
             //create the folder object and open it
@@ -55,12 +74,15 @@ public class Melee {
             inbox.open(Folder.READ_ONLY);
             int totalMessages = inbox.getMessageCount();
 
-            Message[] messages = inbox.getMessages(totalMessages - 10, totalMessages);
+            Message[] messages = inbox.getMessages(totalMessages, totalMessages);
 
             for (Message message: messages){
-                MeleeUtils.HandleMultipartContent(message);
+                dataServiceDao.save(new Data(
+                        MeleeUtils.randomString(),
+                        MeleeUtils.HandleMultipartContent(message),
+                        false
+                ));
             }
-
             inbox.close(false);
             store.close();
         } catch (Exception e) {
