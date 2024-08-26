@@ -12,35 +12,27 @@ public class PropertiesConfig {
         this.host = host;
         this.address = address;
     }
-
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
-
     public String getHost() {
         return host;
     }
-
     public void setHost(String host) {
         this.host = host;
     }
-
     public String getStoreType() {
         return storeType;
     }
-
     public void setStoreType(String storeType) {
         this.storeType = storeType;
     }
-
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }

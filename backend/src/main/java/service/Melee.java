@@ -7,81 +7,31 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+// todo: Database READ and WRITE, no more logs
+// todo: API Calls to python-server based on environment variables'
+// todo: env file
+
 public class Melee {
-    private final Logger log = Logger.getLogger(Melee.class.getName());
+    private static final Logger log = Logger.getLogger(Melee.class.getName());
 
     public void run(){
-        Map<String, String> environmentVariables = Objects.requireNonNull(fetchEnvironmentVariables()).orElseThrow(
+        Map<String, String> environmentVariables = Objects.requireNonNull(MeleeUtils.fetchEnvironmentVariables()).orElseThrow(
             () -> new RuntimeException("Unable to fetch environment variables")
         );
         log.info("env: " + environmentVariables.toString());
-        pythonIntegration();
-//        createEmailFetchSession(environmentVariables);
     }
 
-    private void pythonIntegration(){
+    private void apiCall(){
         try{
-            ProcessBuilder processBuilder = new ProcessBuilder("python", "./scripts/main.py");
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
-
-            try(OutputStreamWriter writer = new OutputStreamWriter(process.getOutputStream())){
-                writer.write("This is a message from java");
-                writer.flush();
-
-                try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    String line;
-                    while((line = reader.readLine()) != null){
-                        System.out.println(line);
-                    }
-                }
-                process.waitFor();
-            }catch (Exception exception){
-                System.err.println(exception.getLocalizedMessage());
-            }
+            System.out.println("API Call made");
         }catch (Exception exception){
             System.err.println("Error: " + exception.getLocalizedMessage());
         }
-
-    }
-
-    private Optional<Map<String, String>> fetchEnvironmentVariables(){
-        try{
-            PropertiesConfig propertiesConfig = new PropertiesConfig(
-                System.getenv("EMAIL_PASSWORD"),
-                System.getenv("EMAIL_HOST"),
-                System.getenv("EMAIL_STORE_TYPE"),
-                System.getenv("EMAIL_ADDRESS")
-            );
-            return Optional.of(
-                Map.of(
-                    "host", propertiesConfig.getHost(),
-                    "storeType", propertiesConfig.getStoreType(),
-                    "address", propertiesConfig.getAddress(),
-                    "password", propertiesConfig.getPassword()
-                )
-            );
-        }catch (Exception error){
-            System.err.println("Error fetching environment variables: " + error.getLocalizedMessage());
-        }
-        return Optional.empty();
-    }
-
-    private Properties setUpProperties(String host, String protocol){
-        Properties properties = new Properties();
-        properties.put("mail.imap.host", host);
-        properties.put("mail.imap.port", "995");
-        properties.put("mail.store.protocol", protocol);
-        return properties;
     }
 
     private void createEmailFetchSession(Map<String, String> environmentVariables){
@@ -108,10 +58,6 @@ public class Melee {
             Message[] messages = inbox.getMessages(totalMessages - 10, totalMessages);
 
             for (Message message: messages){
-                System.out.println(message.getAllHeaders());
-                String contentType = inbox.getMessage(totalMessages).getContentType();
-                System.out.println(contentType);
-
                 MeleeUtils.HandleMultipartContent(message);
             }
 
@@ -120,5 +66,13 @@ public class Melee {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
         }
+    }
+
+    private Properties setUpProperties(String host, String protocol){
+        Properties properties = new Properties();
+        properties.put("mail.imap.host", host);
+        properties.put("mail.imap.port", "995");
+        properties.put("mail.store.protocol", protocol);
+        return properties;
     }
 }
