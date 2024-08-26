@@ -52,7 +52,6 @@ public class MeleeUtils {
     }
 
     public static String randomString() {
-        // length is bounded by 256 Character
         int n = 20;
         byte[] array = new byte[256];
         new Random().nextBytes(array);

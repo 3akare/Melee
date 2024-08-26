@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Backend service started...");
+        System.out.println("Melee started...");
 
         // Create a ScheduledExecutorService with a thread pool size of 2
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
@@ -24,18 +24,18 @@ public class Main {
 //        executorService.scheduleAtFixedRate(task2, 0, 2, TimeUnit.HOURS);
 
         // Add a shutdown hook to handle shutdown events
-//        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-//            System.out.println("Shutdown hook triggered...");
-//            executorService.shutdown();
-//            try {
-//                if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
-//                    executorService.shutdownNow();
-//                }
-//            } catch (InterruptedException e) {
-//                executorService.shutdownNow();
-//            }
-//            System.out.println("Backend service stopped...");
-//        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutdown hook triggered...");
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+            }
+            System.out.println("Melee stopped...");
+        }));
 
         // Keep the application alive
         try {

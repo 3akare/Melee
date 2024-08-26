@@ -30,7 +30,7 @@ public class Melee {
         ){
             iDataServiceDao dataServiceDao = new DataServiceDaoImpl(mongoClient, "MeleeDatabase");
             createEmailSession(dataServiceDao);
-            System.out.println(parserApiCall());
+//            System.out.println(parserApiCall());
         }catch (Exception exception){
             System.err.println(exception.getLocalizedMessage());
         }
@@ -39,14 +39,13 @@ public class Melee {
     private Object parserApiCall(){
         try{
             HttpClient httpClient = HttpClient.newHttpClient();
-            String url = props.getParserUrl();
+            String url = props.getParserUrl() + "/process";
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .header("Accept", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("Hello"))
-                    .build();
-
-            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                .uri(URI.create(url))
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString("Hello"))
+                .build();
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
         } catch (Exception error){
             System.err.println(error.getLocalizedMessage());
         }
@@ -54,12 +53,11 @@ public class Melee {
     }
 
     private void createEmailSession(iDataServiceDao dataServiceDao){
-        System.out.println(props);
         try {
             Session emailSession = Session.getDefaultInstance(
                 setUpProperties(
-                        props.getHost(),
-                        props.getStoreType()
+                    props.getHost(),
+                    props.getStoreType()
                 )
             );
             Store store = emailSession.getStore(props.getStoreType());
