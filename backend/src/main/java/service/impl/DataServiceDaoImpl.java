@@ -31,9 +31,9 @@ public class DataServiceDaoImpl implements iDataServiceDao {
         List<Data> data = new ArrayList<>();
         for (Document document : dataCollection.find()) {
             data.add(new Data(
-                    document.getString("_id"),
-                    document.getString("_id"),
-                    document.getBoolean("read")
+                document.getString("_id"),
+                document.getString("data"),
+                document.getBoolean("read")
             ));
         }
         return data;
