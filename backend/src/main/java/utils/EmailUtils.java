@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static constant.MeleeConstants.*;
+
 public class EmailUtils {
     private static final Logger log = Logger.getLogger(EmailUtils.class.getName());
 
@@ -23,6 +25,27 @@ public class EmailUtils {
             log.warning("email: extraction error: " + exception.getLocalizedMessage());
         }
         return null;
+    }
+
+    public static String extractText(String html) {
+        return URL_PATTERN.matcher(
+                IMAGE_TAG_PATTERN.matcher(
+                        HTML_TAG_PATTERN.matcher(html).replaceAll(" ")
+                ).replaceAll("")
+        ).replaceAll(" ").trim();
+    }
+
+    public static String removeStyles(String htmlContent) {
+        if (htmlContent == null || htmlContent.isEmpty()) {
+            return htmlContent;
+        }
+        // Remove <style>...</style> tags and their content
+        htmlContent = htmlContent.replaceAll("(?is)<style[^>]*>.*?</style>", "");
+        htmlContent = htmlContent.replaceAll("(?i)style\\s*=\\s*\"[^\"]*\"", "");
+        htmlContent = htmlContent.replaceAll("(?i)class\\s*=\\s*\"[^\"]*\"", "");
+        htmlContent = htmlContent.replaceAll("(?i)id\\s*=\\s*\"[^\"]*\"", "");
+        htmlContent = htmlContent.replaceAll("\\{[^}]*}", "");
+        return htmlContent;
     }
 
     public static boolean validEmailAddress(Message message){

@@ -10,8 +10,8 @@ import javax.mail.*;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import static utils.EmailUtils.extractEmail;
-import static utils.EmailUtils.validEmailAddress;
+import static constant.MeleeConstants.BATCH_SIZE;
+import static utils.EmailUtils.*;
 
 // todo AI model to parse data
 
@@ -58,14 +58,14 @@ public class Melee {
         inbox.open(Folder.READ_ONLY);
 
         int totalMessages = inbox.getMessageCount();
-        Message[] messages = inbox.getMessages(totalMessages - 100, totalMessages);
+        Message[] messages = inbox.getMessages(totalMessages - BATCH_SIZE, totalMessages);
 
         for (Message message: messages){
             if(validEmailAddress(message)){
                 dataServiceDao.save(new Data(
                     MeleeUtils.randomString(),
-                    MeleeUtils.HandleMultipartContent(message),
-                    extractEmail(message),
+                    extractText(MeleeUtils.HandleMultipartContent(message)),
+                    removeStyles(extractEmail(message)),
                     message.getSentDate(),
                     false
                 ));
