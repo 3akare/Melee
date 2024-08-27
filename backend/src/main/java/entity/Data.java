@@ -1,13 +1,19 @@
 package entity;
 
+import java.util.Date;
+
 public class Data {
     private String id;
     private String data;
+    private String senderEmail;
+    private Date dataTime;
     private boolean read;
 
-    public Data(String id, String data, boolean read) {
+    public Data(String id, String data, String senderEmail, Date dataTime, boolean read) {
         this.id = id;
         this.data = data;
+        this.senderEmail = senderEmail;
+        this.dataTime = dataTime;
         this.read = read;
     }
 
@@ -25,6 +31,22 @@ public class Data {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getSenderEmail() {
+        return senderEmail;
+    }
+
+    public void setSenderEmail(String senderEmail) {
+        this.senderEmail = senderEmail;
+    }
+
+    public Date getDataTime() {
+        return dataTime;
+    }
+
+    public void setDataTime(Date dataTime) {
+        this.dataTime = dataTime;
     }
 
     public boolean isRead() {

@@ -27,26 +27,26 @@ public class MeleeUtils {
                 )
             );
         }catch (Exception error){
-            System.err.println("Error fetching environment variables: " + error.getLocalizedMessage());
+            log.warning("melee: error fetching environment variables: " + error.getLocalizedMessage());
         }
         return Optional.empty();
     }
 
     public static String HandleMultipartContent(Message message) {
         try {
-            String bodyContent = "";
+            StringBuilder bodyContent = new StringBuilder();
             Object content = message.getContent();
             Multipart multipart = (Multipart) content;
             for (int i = 0; i < multipart.getCount(); i++) {
                 BodyPart bodyPart = multipart.getBodyPart(i);
                 if (bodyPart.getContent() instanceof String) {
                     assert false;
-                    bodyContent += (String) bodyPart.getContent();
+                    bodyContent.append((String) bodyPart.getContent());
                 }
             }
-            return bodyContent;
+            return bodyContent.toString();
         } catch (Exception exception) {
-            System.err.println("Handling Multipart Content: " + exception.getLocalizedMessage());
+            log.warning("melee: error handling multipart content: " + exception.getLocalizedMessage());
         }
         return "";
     }
@@ -70,5 +70,5 @@ public class MeleeUtils {
             }
         }
         return r.toString();
-        }
+    }
 }

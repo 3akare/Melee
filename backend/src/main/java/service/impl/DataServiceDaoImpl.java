@@ -8,6 +8,7 @@ import org.bson.Document;
 import service.iDataServiceDao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DataServiceDaoImpl implements iDataServiceDao {
@@ -15,14 +16,16 @@ public class DataServiceDaoImpl implements iDataServiceDao {
 
     public DataServiceDaoImpl(MongoClient mongoClient, String databaseName) {
         MongoDatabase database = mongoClient.getDatabase(databaseName);
-        dataCollection = database.getCollection("data");
+        dataCollection = database.getCollection("raw_data");
     }
 
     @Override
     public void save(Data data) {
         Document document = new Document("_id", data.getId())
-                .append("data", data.getData())
-                .append("read", false);
+            .append("data", data.getData())
+            .append("time", data.getDataTime())
+            .append("from", data.getSenderEmail())
+            .append("read", false);
         dataCollection.insertOne(document);
     }
 
@@ -33,7 +36,9 @@ public class DataServiceDaoImpl implements iDataServiceDao {
             data.add(new Data(
                 document.getString("_id"),
                 document.getString("data"),
-                document.getBoolean("read")
+                    document.getString("senderEmail"),
+                    (Date) document.get("dateTime"),
+                    document.getBoolean("read")
             ));
         }
         return data;
