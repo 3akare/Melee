@@ -17,7 +17,10 @@ import java.net.http.HttpResponse;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-// todo: Database READ and WRITE, no more logs
+// todo AI model to parse data
+// todo start client side
+// todo: filter by emails
+
 
 public class Melee {
     private static final Logger log = Logger.getLogger(Melee.class.getName());
