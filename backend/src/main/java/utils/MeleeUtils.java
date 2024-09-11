@@ -23,7 +23,8 @@ public class MeleeUtils {
                     dotenv.get("EMAIL_HOST"),
                     dotenv.get("EMAIL_STORE_TYPE"),
                     dotenv.get("EMAIL_ADDRESS"),
-                    dotenv.get("PARSER_URL")
+                    dotenv.get("GEMINI_AI_URL"),
+                    dotenv.get("GEMINI_API_KEY")
                 )
             );
         }catch (Exception error){

@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import config.PropertiesConfig;
 import entity.Data;
 import service.impl.DataServiceDaoImpl;
+import utils.ApiUtils;
 import utils.MeleeUtils;
 
 import javax.mail.*;
@@ -62,13 +63,17 @@ public class Melee {
 
         for (Message message: messages){
             if(validEmailAddress(message)){
+                String extractedData = extractText(MeleeUtils.HandleMultipartContent(message));
+                log.info(extractedData);
                 dataServiceDao.save(new Data(
                     MeleeUtils.randomString(),
-                    extractText(MeleeUtils.HandleMultipartContent(message)),
+                    extractedData,
                     removeStyles(extractEmail(message)),
                     message.getSentDate(),
                     false
                 ));
+                System.out.println(ApiUtils.parserApiCall(extractedData));
+                break; /* for testing */
             }
         }
 

@@ -8,5 +8,4 @@ public class MeleeConstants {
     public static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^>]*>");
     public static final Pattern URL_PATTERN = Pattern.compile("https?://\\S+");
     public static final Pattern IMAGE_TAG_PATTERN = Pattern.compile("<img[^>]*>");
-
 }

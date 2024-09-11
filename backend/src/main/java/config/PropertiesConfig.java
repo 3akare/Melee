@@ -5,15 +5,19 @@ public class PropertiesConfig {
     private String host;
     private String storeType;
     private String address;
-    private String parserUrl;
+    private String geminiUrl;
+    private String geminiApiKey;
 
-    public PropertiesConfig(String password, String host, String storeType, String address, String parserUrl){
+    public PropertiesConfig(String password, String host, String storeType, String address, String geminiUrl, String geminiApiKey) {
         this.password = password;
-        this.storeType = storeType;
         this.host = host;
+        this.storeType = storeType;
         this.address = address;
-        this.parserUrl = parserUrl;
+        this.geminiUrl = geminiUrl;
+        this.geminiApiKey = geminiApiKey;
     }
+
+
     public String getPassword() {
         return password;
     }
@@ -38,10 +42,16 @@ public class PropertiesConfig {
     public void setAddress(String address) {
         this.address = address;
     }
-    public String getParserUrl() {
-        return parserUrl;
+    public String getGeminiApiKey() {
+        return geminiApiKey;
     }
-    public void setParserUrl(String parserUrl) {
-        this.parserUrl = parserUrl;
+    public void setGeminiApiKey(String geminiApiKey) {
+        this.geminiApiKey = geminiApiKey;
+    }
+    public String getGeminiUrl() {
+        return geminiUrl;
+    }
+    public void setGeminiUrl(String geminiUrl) {
+        this.geminiUrl = geminiUrl;
     }
 }
