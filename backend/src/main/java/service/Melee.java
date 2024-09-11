@@ -63,7 +63,7 @@ public class Melee {
 
         for (Message message: messages){
             if(validEmailAddress(message)){
-                String extractedData = extractText(MeleeUtils.HandleMultipartContent(message));
+                String extractedData = MeleeUtils.HandleMultipartContent(message);
                 log.info(extractedData);
                 dataServiceDao.save(new Data(
                     MeleeUtils.randomString(),
